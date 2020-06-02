@@ -1,0 +1,1 @@
+This directory serves as the file system cache.
