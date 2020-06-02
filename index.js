@@ -3,9 +3,12 @@ const express = require('express')
 const app = express()
 const db = require('./database')
 const axios = require('axios')
+const cors = require('cors')
 
 const port = process.env.PORT || 8000
 const clientID = process.env.CLIENTID
+
+app.use(cors())
 
 app.listen(port, () => {
     console.log('Server is running')
