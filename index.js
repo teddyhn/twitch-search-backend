@@ -16,7 +16,7 @@ app.listen(port, () => {
 
 app.get('/search/:query', async (req, res) => {
     try {
-        const cachedData = await db.fetchFromDB(req.params.query)
+        const cachedData = await db.fetchFromDB(req.params.query.toLowerCase())
 
         if (cachedData == null) {
             const response = await axios.get(`https://api.twitch.tv/kraken/channels/${req.params.query}`, {
