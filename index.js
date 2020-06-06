@@ -19,15 +19,27 @@ app.get('/search/:query', async (req, res) => {
         const cachedData = await db.fetchFromDB(req.params.query.toLowerCase())
 
         if (cachedData == null) {
-            const response = await axios.get(`https://api.twitch.tv/kraken/channels/${req.params.query}`, {
+            const response = await axios.get(`https://api.twitch.tv/kraken/users/?login=${req.params.query}`, {
                 headers: {
-                    'client-id': clientID
+                    'client-id': clientID,
+                    'accept': 'application/vnd.twitchtv.v5+json'
                 }
             })
-            const data = response.data
-            res.send(data)
-    
-            db.saveToDB(data.name, data)
+
+            if (response.data._total == 1) {
+                const channel = await axios.get(`https://api.twitch.tv/kraken/channels/${response.data.users[0]._id}`, {
+                    headers: {
+                        'client-id': clientID,
+                        'accept': 'application/vnd.twitchtv.v5+json'
+                    }
+                })
+                
+                res.send(channel.data)
+
+                db.saveToDB(channel.data.name, channel.data)
+            }
+
+            else res.status(404).send('Twitch user not found')
         }
 
         else {
